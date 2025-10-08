@@ -15,6 +15,7 @@ obj-$(CONFIG_HUSH_MODERN_PARSER) += cli_hush_modern.o
 obj-$(CONFIG_AUTOBOOT) += autoboot.o
 obj-$(CONFIG_BUTTON_CMD) += button_cmd.o
 obj-y += version.o
+obj-$(CONFIG_AWARDMODULAR) += awardmodular.o
 
 # # boards
 obj-y += board_f.o

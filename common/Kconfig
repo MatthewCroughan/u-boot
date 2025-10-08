@@ -756,6 +756,13 @@ config BOARD_LATE_INIT
 	  So this config enable the late init code with the help of board_late_init
 	  function which should defined on respective boards.
 
+config AWARDMODULAR
+	bool "AWARD MODULAR BIOS"
+	depends on VIDEO && BMP
+	help
+	  Select this to enable AWARD MODULAR BIOS simulation. This simulation runs
+	  before preboot command.
+
 config CLOCKS
 	bool "Call set_cpu_clk_info"
 	depends on ARM

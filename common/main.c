@@ -6,6 +6,7 @@
 
 /* #define	DEBUG	*/
 
+#include <awardmodular.h>
 #include <autoboot.h>
 #include <button.h>
 #include <bootstage.h>
@@ -50,6 +51,11 @@ void main_loop(void)
 
 	cli_init();
 
+	if (IS_ENABLED(CONFIG_AWARDMODULAR)) {
+		init_modular_bios();
+		print_modular_bios();
+	}
+
 	if (IS_ENABLED(CONFIG_USE_PREBOOT))
 		run_preboot_environment_command();
 
@@ -67,6 +73,11 @@ void main_loop(void)
 	s = bootdelay_process();
 	if (cli_process_fdt(&s))
 		cli_secure_boot_cmd(s);
+
+	if (IS_ENABLED(CONFIG_AWARDMODULAR)) {
+		epa_logo_fade();
+		print_modular_bios_second();
+	}
 
 	autoboot_command(s);
 
