@@ -13,10 +13,14 @@
 #include <display_options.h>
 #include <awardmodular.h>
 
-/* TODO: Support 16x32 font size */
 #if defined(CONFIG_VIDEO_FONT_8X16)
-#include <awardlogobmp_16.h>
-#include <awardbmp.h>
+#include <modular_awardlogo_8x16.h>
+#include <modular_epalogo_8x16.h>
+#endif
+
+#if defined(CONFIG_VIDEO_FONT_16X32)
+#include <modular_awardlogo_16x32.h>
+#include <modular_epalogo_16x32.h>
 #endif
 
 #include <bmp_layout.h>
@@ -51,6 +55,9 @@ struct modular_bios {
 	/* EPA Logo */
 	struct bmp_image *epa_logo;
 	int epa_pos[2];
+
+	/* Award Logo */
+	struct bmp_image *award_logo;
 };
 
 static struct modular_bios modular_bios_priv;
@@ -309,10 +316,10 @@ int print_modular_bios(void)
 	bmphdr = &priv->epa_logo->header;
 	priv->epa_pos[0] = video_get_xsize(vdev) - bmphdr->width;
 	priv->epa_pos[1] = cdev_priv->ycur;
-	ERR_RET(video_bmp_display(vdev, (ulong)&awardbmp_bitmap[0],
+	ERR_RET(video_bmp_display(vdev, (ulong)priv->epa_logo,
 				  priv->epa_pos[0], priv->epa_pos[1], false));
 
-	ERR_RET(video_bmp_display(vdev, (ulong)&awardbmp_logo_bitmap[0],
+	ERR_RET(video_bmp_display(vdev, (ulong)priv->award_logo,
 				  0, cdev_priv->ycur, false));
 
 	ERR_RET(vidconsole_put_string(cdev, "Award Modular BIOS v6.00PG, An Energy Star Ally\n"
@@ -412,6 +419,7 @@ int print_modular_bios_second(void)
 void init_modular_bios(void)
 {
 	struct modular_bios *priv = &modular_bios_priv;
+	unsigned int fontsize;
 
 	priv->initialized = false;
 
@@ -428,7 +436,28 @@ void init_modular_bios(void)
 	get_modular_cpu_info();
 	get_modular_ram_size();
 
-	priv->epa_logo = (void *)&awardbmp_bitmap;
+	if (vidconsole_get_font_size(priv->cdev, NULL, &fontsize) < 0)
+		return;
+
+	switch (fontsize) {
+#if defined(CONFIG_VIDEO_FONT_8X16)
+	case 8:
+		priv->epa_logo = (void *)&epalogo_8x16_bitmap;
+		priv->award_logo = (void *)&awardlogo_8x16_bitmap;
+		break;
+#endif
+#if defined(CONFIG_VIDEO_FONT_16X32)
+	case 16:
+		priv->epa_logo = (void *)&epalogo_16x32_bitmap;
+		priv->award_logo = (void *)&awardlogo_16x32_bitmap;
+		break;
+#endif
+	default:
+		break;
+	}
+
+	if (!priv->epa_logo || !priv->award_logo)
+		return;
 
 	priv->initialized = true;
 }
