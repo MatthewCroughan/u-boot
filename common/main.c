@@ -21,6 +21,8 @@
 #include <version_string.h>
 #include <efi_loader.h>
 
+#include <linux/delay.h>
+
 static void run_preboot_environment_command(void)
 {
 	char *p;
@@ -76,6 +78,7 @@ void main_loop(void)
 
 	if (IS_ENABLED(CONFIG_AWARDMODULAR)) {
 		epa_logo_fade();
+		mdelay(2000);
 		print_modular_bios_second();
 	}
 
