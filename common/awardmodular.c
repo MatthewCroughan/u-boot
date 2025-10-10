@@ -13,7 +13,7 @@
 #include <display_options.h>
 #include <awardmodular.h>
 
-#if defined(CONFIG_VIDEO_FONT_8X16)
+#if defined(CONFIG_VIDEO_FONT_8X16) && !defined(CONFIG_AWARDMODULAR_START_16X32)
 #include <modular_awardlogo_8x16.h>
 #include <modular_epalogo_8x16.h>
 #endif
@@ -303,6 +303,9 @@ int print_modular_bios(void)
 	cdev = priv->cdev;
 	vdev = priv->vdev;
 
+	if (IS_ENABLED(CONFIG_AWARDMODULAR_START_16X32))
+		vidconsole_select_font(priv->cdev, "16x32", 0);
+
 	ERR_RET(vidconsole_clear_and_reset(cdev));
 
 	/* convert auto generated plain version to uppercase */
@@ -356,6 +359,9 @@ int print_modular_bios_second(void)
 
 	cdev = priv->cdev;
 	vdev = priv->vdev;
+
+	if (IS_ENABLED(CONFIG_AWARDMODULAR_START_16X32))
+		vidconsole_select_font(priv->cdev, NULL, 0);
 
 	ERR_RET(vidconsole_clear_and_reset(cdev));
 
@@ -419,7 +425,6 @@ int print_modular_bios_second(void)
 void init_modular_bios(void)
 {
 	struct modular_bios *priv = &modular_bios_priv;
-	unsigned int fontsize;
 
 	priv->initialized = false;
 
@@ -435,6 +440,12 @@ void init_modular_bios(void)
 	get_modular_board_model();
 	get_modular_cpu_info();
 	get_modular_ram_size();
+
+#if IS_ENABLED(CONFIG_AWARDMODULAR_START_16X32)
+	priv->epa_logo = (void *)&epalogo_16x32_bitmap;
+	priv->award_logo = (void *)&awardlogo_16x32_bitmap;
+#else
+	unsigned int fontsize;
 
 	if (vidconsole_get_font_size(priv->cdev, NULL, &fontsize) < 0)
 		return;
@@ -455,6 +466,7 @@ void init_modular_bios(void)
 	default:
 		break;
 	}
+#endif
 
 	if (!priv->epa_logo || !priv->award_logo)
 		return;

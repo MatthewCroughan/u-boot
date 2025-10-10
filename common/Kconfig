@@ -763,6 +763,20 @@ config AWARDMODULAR
 	  Select this to enable AWARD MODULAR BIOS simulation. This simulation runs
 	  before preboot command.
 
+if AWARDMODULAR
+config AWARDMODULAR_START_16X32
+	bool "Start with 16x32 font size"
+	select VIDEO_FONT_16X32
+	help
+	  Select this to use 16x32 font size. This is useful if you have multiple
+	  font sizes enabled and on a platform where you need the most attention
+	  on the simulation.
+
+	  If your platform starts U-Boot in high/native resolution, you probably
+	  will want to enable this.
+
+endif
+
 config CLOCKS
 	bool "Call set_cpu_clk_info"
 	depends on ARM
