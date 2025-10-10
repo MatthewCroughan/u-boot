@@ -19,7 +19,11 @@
 #include <video_font_sun12x22.h>
 #endif
 #if defined(CONFIG_VIDEO_FONT_16X32)
+#if defined(CONFIG_VIDEO_FONT_16X32_VGA)
+#include <video_font_vga16x32.h>
+#else
 #include <video_font_ter16x32.h>
+#endif
 #endif
 
 static struct video_fontdata __maybe_unused fonts[] = {
