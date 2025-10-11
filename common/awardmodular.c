@@ -217,6 +217,7 @@ void epa_logo_fade(void)
 
 		video_bmp_display(priv->vdev, (ulong)epa_logo,
 				  priv->epa_pos[0], priv->epa_pos[1], false);
+		video_sync(priv->vdev, true);
 	}
 }
 
@@ -276,6 +277,7 @@ static int print_award_memory_test(void)
 
 			vidconsole_position_cursor(priv->cdev, x, y);
 			vidconsole_put_string(priv->cdev, memstr);
+			video_sync(priv->vdev, true);
 		}
 	}
 
@@ -337,6 +339,8 @@ int print_modular_bios(void)
 
 	vidconsole_put_string(cdev, priv->model);
 	vidconsole_put_string(cdev, "\n\n");
+
+	video_sync(priv->vdev, true);
 
 	ERR_RET(print_award_cpu());
 	ERR_RET(print_award_memory_test());
