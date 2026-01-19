@@ -759,6 +759,7 @@ config BOARD_LATE_INIT
 config AWARDMODULAR
 	bool "AWARD MODULAR BIOS"
 	depends on VIDEO && BMP
+	select BMP_24BPP
 	help
 	  Select this to enable AWARD MODULAR BIOS simulation. This simulation runs
 	  before preboot command.
